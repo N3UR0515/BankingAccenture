@@ -1,12 +1,16 @@
 public class BankAccount {
-    /*
-** Optionally make the program interactive with user e.g. using Scanner
-     */
     private float balance;
+    private String secretCode;
 
     public BankAccount(){}
     public BankAccount(float balanceToSet){
         balance = balanceToSet;
+    }
+
+    public BankAccount(float balanceToSet, String secretCodeToSet)
+    {
+        balance = balanceToSet;
+        secretCode = secretCodeToSet;
     }
 
     private void validateAmount(float amount) throws Exception
@@ -37,6 +41,13 @@ public class BankAccount {
 
     public void transfer(BankAccount anotherAccount, float amount) throws Exception {
         this.withdraw(amount);
+        if(this.getSecretCode().equals(anotherAccount.getSecretCode()))
+            throw new Exception("Money can't be transferred to the same account");
         anotherAccount.deposit(amount);
+    }
+
+    public String getSecretCode()
+    {
+        return secretCode;
     }
 }
