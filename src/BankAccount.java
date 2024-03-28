@@ -1,16 +1,18 @@
 public class BankAccount {
     private float balance;
-    private String secretCode;
+    private String password;
+    private int accountNumber;
 
     public BankAccount(){}
     public BankAccount(float balanceToSet){
         balance = balanceToSet;
     }
 
-    public BankAccount(float balanceToSet, String secretCodeToSet)
+    public BankAccount(float balanceToSet, String passwordToSet, int accountNumberToSet)
     {
         balance = balanceToSet;
-        secretCode = secretCodeToSet;
+        password = passwordToSet;
+        accountNumber = accountNumberToSet;
     }
 
     private void validateAmount(float amount) throws Exception
@@ -40,14 +42,19 @@ public class BankAccount {
     }
 
     public void transfer(BankAccount anotherAccount, float amount) throws Exception {
-        this.withdraw(amount);
-        if(this.getSecretCode().equals(anotherAccount.getSecretCode()))
+        if(this.accountNumber == anotherAccount.getAccountNumber())
             throw new Exception("Money can't be transferred to the same account");
+        this.withdraw(amount);
         anotherAccount.deposit(amount);
     }
 
-    public String getSecretCode()
+    public String getPassword()
     {
-        return secretCode;
+        return password;
+    }
+
+    public int getAccountNumber()
+    {
+        return accountNumber;
     }
 }

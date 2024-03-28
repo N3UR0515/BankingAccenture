@@ -5,8 +5,8 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         List<BankAccount> bankAccountList = new ArrayList<>();
-        BankAccount bankAccount1 = new BankAccount(100, "aaaa");
-        BankAccount bankAccount2 = new BankAccount(200, "bbbb");
+        BankAccount bankAccount1 = new BankAccount(100, "aaaa", 1);
+        BankAccount bankAccount2 = new BankAccount(200, "bbbb", 2);
         bankAccountList.add(bankAccount1);
         bankAccountList.add(bankAccount2);
 
@@ -15,10 +15,15 @@ public class Main {
 
         while (true) {
             if (loggedInto == null) {
-                System.out.println("Provide an id to login");
-                loggedInto = findAccount(scanner, bankAccountList);
-                if (loggedInto == null)
-                    System.out.println("Provided id is not valid");
+                try{
+                    loggedInto = login(scanner, bankAccountList);
+                }catch (java.util.InputMismatchException e){
+                    System.out.println(e);
+                    scanner.nextLine();
+                } catch (Exception e){
+                    System.out.println(e);
+                }
+
             } else {
                 System.out.println("Welcome to the banking system\nWhat would you like to do?\n");
                 boolean exit = false;
@@ -42,12 +47,8 @@ public class Main {
                                 System.out.println("Amount to transfer: ");
                                 amount = scanner.nextFloat();
                                 System.out.println("Who will you transfer it to?");
-                                String pass = scanner.nextLine();
                                 BankAccount temp = findAccount(scanner, bankAccountList);
-                                if(temp != null)
-                                    loggedInto.transfer(temp, amount);
-                                else
-                                    System.out.println("Provided user doesn't exist");
+                                loggedInto.transfer(temp, amount);
                                 break;
                             case 4:
                                 break;
@@ -62,10 +63,10 @@ public class Main {
 
                     } catch (Exception e) {
                         System.out.println(e);
+                        scanner.nextLine();
                     } finally {
                         if (loggedInto != null)
                             loggedInto.printBalance();
-                        scanner.nextLine();
                     }
 
                 } while (!exit);
@@ -76,12 +77,25 @@ public class Main {
 
     }
 
-    public static BankAccount findAccount(Scanner scanner, List<BankAccount> bankAccountList) {
-        String password = scanner.nextLine();
+    public static BankAccount findAccount(Scanner scanner, List<BankAccount> bankAccountList) throws Exception {
+        int id = scanner.nextInt();
         for (BankAccount acc : bankAccountList)
-            if (acc.getSecretCode().equals(password))
+            if (acc.getAccountNumber() == id)
+            {
                 return acc;
+            }
+        throw new Exception("Account is not found");
+    }
 
-        return null;
+    public static BankAccount login(Scanner scanner, List<BankAccount> bankAccountList) throws Exception {
+        System.out.println("Provide an id to login");
+        BankAccount bankAccount = null;
+        bankAccount = findAccount(scanner, bankAccountList);
+        System.out.println("Provide a password");
+        scanner.nextLine();
+        String pass = scanner.nextLine();
+        if(!pass.equals(bankAccount.getPassword()))
+            throw new Exception("Password is incorrect");
+        return bankAccount;
     }
 }
